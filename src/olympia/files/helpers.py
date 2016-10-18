@@ -2,6 +2,7 @@ import codecs
 import mimetypes
 import os
 import stat
+from datetime import datetime
 
 from django.conf import settings
 from django.core.files.storage import default_storage as storage
@@ -71,9 +72,12 @@ class FileViewer(object):
         self.file = file_obj
         self.addon = self.file.version.addon
         self.src = file_obj.current_file_path
-        self.dest = os.path.join(settings.TMP_PATH, 'file_viewer',
-                                 str(file_obj.pk))
+        self.dest = os.path.join(
+            settings.TMP_PATH, 'file_viewer',
+            datetime.utcnow().strftime('%Y%m%d'),
+            str(file_obj.pk))
         self._files, self.selected = None, None
+        print('initialized', self)
 
     def __str__(self):
         return str(self.file.id)
@@ -212,6 +216,7 @@ class FileViewer(object):
         this file, build templates etc.
         """
         if self._files:
+            print('SELF FILES')
             return self._files
 
         if not self.is_extracted():

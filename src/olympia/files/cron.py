@@ -14,6 +14,8 @@ from olympia.files.models import FileValidation
 
 log = commonware.log.getLogger('z.cron')
 
+FILE_VIEWER_EXTRACTED_FILES_TIMEOUT = 24 * 60 * 60
+
 
 @cronjobs.register
 def cleanup_extracted_file():
@@ -21,11 +23,14 @@ def cleanup_extracted_file():
     root = os.path.join(settings.TMP_PATH, 'file_viewer')
     for path in os.listdir(root):
         full = os.path.join(root, path)
-        age = time.time() - os.stat(full)[stat.ST_ATIME]
-        if age > 60 * 60:
+        age = time.time() - os.stat(full)[stat.ST_MTIME]
+
+        # Allow extracted files to exist for a day.
+        if age > FILE_VIEWER_EXTRACTED_FILES_TIMEOUT:
             log.debug('Removing extracted files: %s, %dsecs old.' %
                       (full, age))
             shutil.rmtree(full)
+
             # Nuke out the file and diff caches when the file gets removed.
             id = os.path.basename(path)
             try:
