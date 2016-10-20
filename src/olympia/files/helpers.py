@@ -101,15 +101,12 @@ class FileViewer(object):
                 os.makedirs(self.dest)
             except OSError, err:
                 pass
+
             copyfileobj(storage.open(self.src),
                         open(os.path.join(self.dest,
                                           self.file.filename), 'w'))
         else:
-            try:
-                extract_xpi(self.src, self.dest, expand=True)
-            except Exception, err:
-                task_log.error('Error (%s) extracting %s' % (err, self.src))
-                raise
+            extract_xpi(self.src, self.dest, expand=True)
 
     def cleanup(self):
         if os.path.exists(self.dest):

@@ -427,7 +427,7 @@ class TestSafeUnzipFile(TestCase, amo.tests.AMOPaths):
     def test_extract_path(self):
         zip_file = SafeUnzip(self.xpi_path('langpack-localepicker'))
         assert zip_file.is_valid()
-        assert'locale browser de' in zip_file.extract_path('chrome.manifest')
+        assert 'locale browser de' in zip_file.extract_path('chrome.manifest')
 
     def test_not_secure(self):
         zip_file = SafeUnzip(self.xpi_path('extension'))

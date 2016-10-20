@@ -22,7 +22,7 @@ from olympia.files.models import File
 from olympia.users.models import UserProfile
 
 dictionary = 'src/olympia/files/fixtures/files/dictionary-test.xpi'
-unicode_filenames = 'src/olympia/files/fixtures/files/unicode-filenames.xpi'
+unicode_filenames = 'src/olympia/files/fixtures/files/unicode-filenames-2.xpi'
 not_binary = 'install.js'
 binary = 'dictionaries/ar.dic'
 
@@ -378,6 +378,9 @@ class TestFileViewer(FilesBase, TestCase):
     def test_unicode(self):
         self.file_viewer.src = unicode_filenames
         self.file_viewer.extract()
+
+        import ipdb; ipdb.set_trace()
+
         res = self.client.get(self.file_url(u'\u1109\u1161\u11a9'))
         assert res.status_code == 200
 
