@@ -22,6 +22,11 @@ else
     useradd -Md $(pwd) -u $uid olympia
 fi
 
+# Make uwsgi be able to write to /var/run/uwsgi
+chown -R olympia:olympia /var/run/uwsgi
+chmod -R 775 /var/run/uwsgi
+chmod -R 775 /etc/uwsgi.d/
+
 echo "Starting with user: 'olympia' uid: $(id -u olympia)"
 
 # Switch to that user and execute our actual command.

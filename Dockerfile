@@ -7,46 +7,41 @@ RUN touch /addons-server-centos7-container
 # disk.
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
+# Need to compile swig
+ENV SWIG_FEATURES="-D__x86_64__"
 
 ADD docker/mysql-community.gpg.key /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
 ADD docker/nodesource.gpg.key /etc/pki/rpm-gpg/RPM-GPG-KEY-nodesource
+ADD docker/epel.gpg.key /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
 
-# For mysql-python dependencies
-ADD docker/mysql.repo /etc/yum.repos.d/mysql.repo
+ADD docker/nodesource.repo docker/epel.repo docker/mysql.repo /etc/yum.repos.d/
 
-# This is temporary until https://bugzilla.mozilla.org/show_bug.cgi?id=1226533
-ADD docker/nodesource.repo /etc/yum.repos.d/nodesource.repo
-
-RUN yum update -y \
-    && yum install -y \
-        # Supervisor is being used to start and keep our services running
-        supervisor \
-        # General (dev-) dependencies
-        bash-completion \
-        gcc-c++ \
-        curl \
-        make \
-        libjpeg-devel \
-        cyrus-sasl-devel \
-        libxml2-devel \
-        libxslt-devel \
-        zlib-devel \
-        libffi-devel \
-        openssl-devel \
-        python-devel \
+RUN yum update -y                                           \
+    && yum install -y                                       \
+        # General -dev dependencies
+        gcc-c++                                             \
+        bash-completion                                     \
+        curl                                                \
+        gettext                                             \
+        make                                                \
         # Git, because we're using git-checkout dependencies
-        git \
-        # Nodejs for less, stylus, uglifyjs and others
-        nodejs \
+        git                                                 \
+        libffi-devel                                        \
+        libxml2-devel                                       \
+        libxslt-devel                                       \
         # Dependencies for mysql-python
-        mysql-community-devel \
-        mysql-community-client \
-        mysql-community-libs \
-        epel-release \
-        swig \
-    && yum clean all
-
-RUN yum install -y python-pip
+        mysql-community-devel                               \
+        mysql-community-client                              \
+        mysql-community-libs                                \
+        # Nodejs for less, stylus, uglifyjs and others
+        nodejs                                              \
+        openssl-devel                                       \
+        python-devel                                        \
+        swig                                                \
+        uwsgi-2.0.13.1-2.el7                                \
+        uwsgi-plugin-python                                 \
+    && yum clean all                                        \
+    && curl -sSL https://bootstrap.pypa.io/get-pip.py | python
 
 # Until https://github.com/shazow/urllib3/commit/959d47d926e1331ad571dbfc150c9a3acb7a1eb9 lands
 RUN pip install pyOpenSSL ndg-httpsclient pyasn1 certifi urllib3
@@ -61,7 +56,6 @@ ENV PIP_BUILD=/deps/build/
 ENV PIP_CACHE_DIR=/deps/cache/
 ENV PIP_SRC=/deps/src/
 ENV NPM_CONFIG_PREFIX=/deps/
-ENV SWIG_FEATURES="-D__x86_64__"
 
 # Install all python requires
 RUN mkdir -p /deps/{build,cache,src}/ && \

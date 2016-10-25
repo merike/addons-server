@@ -128,10 +128,10 @@ ifeq ($(IN_DOCKER),)
 	$(warning Command is designed to be run in the container)
 endif
 	pip install -e .
-	pip install --no-deps --exists-action=w -r requirements/flake8.txt
-	pip install --no-deps --exists-action=w -r requirements/dev.txt
-	pip install --no-deps --exists-action=w -r requirements/docs.txt
-	pip install --no-deps --exists-action=w -r requirements/prod_without_hash.txt
+	pip install --no-cache-dir --no-deps --exists-action=w -r requirements/flake8.txt
+	pip install --no-cache-dir --no-deps --exists-action=w -r requirements/dev.txt
+	pip install --no-cache-dir --no-deps --exists-action=w -r requirements/docs.txt
+	pip install --no-cache-dir --no-deps --exists-action=w -r requirements/prod_without_hash.txt
 
 install_node_dependencies:
 ifeq ($(IN_DOCKER),)
